@@ -893,9 +893,6 @@ enum <dfn>CallState</dfn> {
           <li>
             <a>Queue a task</a> to:
             <ol>
-              <li>Remove the <var>telCall</var> object from the <a>calls</a>
-              array.
-              </li>
               <li>set the <code>state</code> of <var>telCall</var> to
               "<a>disconnected</a>".
               </li>
@@ -994,9 +991,6 @@ enum <dfn>DisconnectReason</dfn> {
           readonly attribute Call? activeCall
         </dt>
         <dt>
-          readonly attribute Call[] calls
-        </dt>
-        <dt>
           readonly attribute DOMString[] emergencyNumbers
         </dt>
         <dt>
@@ -1011,6 +1005,9 @@ enum <dfn>DisconnectReason</dfn> {
         <dt>
           TelephonyCall dial ([TreatNullAs=EmptyString] DOMString remoteParty,
           optional DialOptions options)
+        </dt>
+        <dt>
+          Call[] getCalls();
         </dt>
         <dt>
           Promise sendTones(DOMString tones, optional ToneOptions options)
@@ -1050,20 +1047,24 @@ enum <dfn>DisconnectReason</dfn> {
           <code>null</code>.
         </p>
       </section>
-      <!-- - - - - - - - - - - - - calls attribute  - - - - - - - - - - - - -->
+      <!-- - - - - - - - - - - - - getCalls method  - - - - - - - - - - - - -->
       <section>
         <h3>
-          The <code>calls</code> attribute
+          The <code>getCalls</code> method
         </h3>
         <p>
-          When getting the <dfn id="widl-TelephonyManager-calls">calls</dfn>
-          attribute, the user agent MUST return an array, which can be empty,
-          of <a>Call</a> objects managed by this objects.
+          The <dfn id="">getCalls</dfn> method retrieves an sequence of all the
+          <a>Call</a> accessible to the document that are not in either the
+          <a>disconnected</a> state or the <a>multiparty</a> state.
         </p>
         <p class="Note">
           <a>TelephonyCall</a> objects belonging to a multiparty call are
           managed by the corresponding <a>ConferenceCall</a> object and won't
-          be present in this array.
+          be returned in the sequence.
+        </p>
+        <p>
+          When the getCalls method is invoked, the user agent MUST run the
+          following steps:
         </p>
       </section>
       <!-- - - - - - - - - - - emergencyNumbers attribute - - - - - - - - - -->
@@ -1468,7 +1469,8 @@ enum <dfn>DisconnectReason</dfn> {
               <a><code>Event</code></a>
             </td>
             <td>
-              handles change in the <a>calls</a> array.
+              handles calls being either managed or no longer managed by a
+              <a>telephony service</a>.
             </td>
           </tr>
           <tr>
@@ -2272,13 +2274,8 @@ enum <dfn>DisconnectReason</dfn> {
               multiparty call <var>confCall</var>.
               </li>
               <li>Add the calls participating in the multiparty call to the <a>
-                calls</a> attribute of the <var>confCall</var> object, remove
-                them from the <a>calls</a> array of the <a>TelephonyManager</a>
-                object, and set their <code>state</code> to
-                <code>'multiparty'</code>.
-              </li>
-              <li>Add the <var>confCall</var> object to the <a>calls</a> array
-              of the <a>TelephonyManager</a> object.
+                calls</a> attribute of the <var>confCall</var> object, and set
+                their <code>state</code> to <code>'multiparty'</code>.
               </li>
               <li>Set the <code>state</code> of <var>confCall</var> to
               "<a>active</a>".
